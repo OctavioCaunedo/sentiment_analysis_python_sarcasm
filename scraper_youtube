@@ -1,0 +1,18 @@
+import pandas as pd
+
+# load the comments csv
+comments_df = pd.read_csv('youtube_comments.csv')
+
+# show the first few rows to make sure it's loaded correctly
+print(comments_df.head())
+
+from transformers import pipeline
+
+# load the sentiment-analysis pipeline
+sentiment_analysis = pipeline('sentiment-analysis')
+
+# apply sentiment analysis to the comments
+comments_df['Sentiment'] = comments_df['Comment'].apply(lambda x: sentiment_analysis(x)[0]['label'])
+
+# show the results
+print(comments_df.head())
