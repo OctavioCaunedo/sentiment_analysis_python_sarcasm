@@ -1,0 +1,31 @@
+import pandas as pd
+from transformers import pipeline
+
+# 1- load the csv file with the scraped comments
+comments_df = pd.read_csv('/Users/octaviocaunedo/youtube_comments.csv')
+
+# show the first few rows to check if it loaded correctly
+print("first few rows of the data:")
+print(comments_df.head())
+
+# 2- clean up the data - replace nan values with empty strings
+comments_df['Comment'].fillna('', inplace=True)  # fill nans with empty strings
+
+# make sure all entries in 'comment' column are strings
+comments_df['Comment'] = comments_df['Comment'].astype(str)
+
+# 3- initialize sentiment analysis
+sentiment_analysis = pipeline('sentiment-analysis')
+
+# 4- apply sentiment analysis to each comment
+comments_df['Sentiment'] = comments_df['Comment'].apply(lambda x: sentiment_analysis(x)[0]['label'] if x.strip() else 'NEUTRAL')
+
+# 5- save the results to a new csv file
+output_file = '/Users/octaviocaunedo/youtube_comments_with_sentiment.csv'
+comments_df.to_csv(output_file, index=False)
+
+print(f"sentiment analysis completed and saved to {output_file}")
+
+# 6- show the first few rows of the results
+print("first few rows of the sentiment analysis results:")
+print(comments_df.head())
